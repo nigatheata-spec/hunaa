@@ -63,6 +63,19 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backgroundImage: {
+        "gradient-gold": "var(--gradient-gold)",
+        "gradient-gold-shine": "var(--gradient-gold-shine)",
+        "gradient-dark": "var(--gradient-dark)",
+        "gradient-hero-overlay": "var(--gradient-hero-overlay)",
+        "gradient-radial-gold": "var(--gradient-radial-gold)",
+      },
+      boxShadow: {
+        "gold": "var(--shadow-gold)",
+        "gold-lg": "var(--shadow-gold-lg)",
+        "card-dark": "var(--shadow-card)",
+        "glow": "var(--shadow-glow)",
+      },
       keyframes: {
         "accordion-down": {
           from: {
