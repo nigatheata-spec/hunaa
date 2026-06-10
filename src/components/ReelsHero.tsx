@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { HunaLogo } from "./HunaLogo";
 import heroImg from "@/assets/hero-huna.jpg";
 import familyImg from "@/assets/track-family.jpg";
 import historyImg from "@/assets/track-history.jpg";
@@ -57,6 +57,7 @@ const INTERVAL = 3000;
 
 export const ReelsHero = () => {
   const [active, setActive] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -64,6 +65,8 @@ export const ReelsHero = () => {
     }, INTERVAL);
     return () => clearInterval(id);
   }, []);
+
+
 
   return (
     <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
@@ -89,9 +92,7 @@ export const ReelsHero = () => {
 
       {/* المحتوى */}
       <div className="relative z-20 h-full container mx-auto px-6 flex flex-col justify-end pb-24 md:pb-32">
-        <div className="mb-8">
-          <HunaLogo />
-        </div>
+
 
         {reels.map((reel, i) => (
           <div
@@ -114,8 +115,8 @@ export const ReelsHero = () => {
                   {reel.subtitle}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button variant="hero" size="xl">{reel.cta}</Button>
-                  <Button variant="outlineGold" size="xl">تعرّف على المسارات</Button>
+                  <Button variant="hero" size="xl" onClick={() => navigate("/auth")}>{reel.cta}</Button>
+                  <Button variant="outlineGold" size="xl" onClick={() => navigate("/pricing")}>اعرض الباقات</Button>
                 </div>
               </>
             )}
