@@ -88,7 +88,14 @@ export default function TitleDetail() {
       {showTrailer && t.trailer_url && (
         <div className="fixed inset-0 z-[60] bg-background/95 flex items-center justify-center p-4" onClick={() => setShowTrailer(false)}>
           <div className="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <video src={t.trailer_url} controls autoPlay className="w-full h-full" />
+            {(() => {
+              const url = t.trailer_url!;
+              const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+              if (yt) {
+                return <iframe src={`https://www.youtube.com/embed/${yt[1]}?autoplay=1`} title={t.title} className="w-full h-full" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
+              }
+              return <video src={url} controls autoPlay className="w-full h-full" />;
+            })()}
           </div>
         </div>
       )}
