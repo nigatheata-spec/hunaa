@@ -14,16 +14,486 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assistant_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          messages: Json
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          messages?: Json
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          messages?: Json
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      content_requests: {
+        Row: {
+          ai_summary: string | null
+          ai_tags: string[] | null
+          audience: string | null
+          cluster_id: string | null
+          created_at: string
+          family_role: Database["public"]["Enums"]["family_role"] | null
+          id: string
+          raw_request: string
+          status: string
+          topic: string | null
+          track: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          ai_tags?: string[] | null
+          audience?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          family_role?: Database["public"]["Enums"]["family_role"] | null
+          id?: string
+          raw_request: string
+          status?: string
+          topic?: string | null
+          track?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ai_summary?: string | null
+          ai_tags?: string[] | null
+          audience?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          family_role?: Database["public"]["Enums"]["family_role"] | null
+          id?: string
+          raw_request?: string
+          status?: string
+          topic?: string | null
+          track?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          donor_email: string | null
+          donor_name: string | null
+          id: string
+          message: string | null
+          provider: string | null
+          provider_payment_id: string | null
+          status: string
+          tier: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          id?: string
+          message?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          status?: string
+          tier?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          id?: string
+          message?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          status?: string
+          tier?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      episodes: {
+        Row: {
+          created_at: string
+          duration_minutes: number | null
+          episode_number: number
+          id: string
+          name: string | null
+          season: number
+          synopsis: string | null
+          title_id: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes?: number | null
+          episode_number: number
+          id?: string
+          name?: string | null
+          season?: number
+          synopsis?: string | null
+          title_id: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number | null
+          episode_number?: number
+          id?: string
+          name?: string | null
+          season?: number
+          synopsis?: string | null
+          title_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episodes_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      influencers: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          system_prompt: string
+          tagline: string | null
+          target_roles: Database["public"]["Enums"]["family_role"][] | null
+          voice_style: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          system_prompt: string
+          tagline?: string | null
+          target_roles?: Database["public"]["Enums"]["family_role"][] | null
+          voice_style?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          system_prompt?: string
+          tagline?: string | null
+          target_roles?: Database["public"]["Enums"]["family_role"][] | null
+          voice_style?: string | null
+        }
+        Relationships: []
+      }
+      payment_gateways: {
+        Row: {
+          code: string
+          config: Json | null
+          created_at: string
+          id: string
+          is_enabled: boolean
+          name: string
+        }
+        Insert: {
+          code: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          name: string
+        }
+        Update: {
+          code?: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          features: string[] | null
+          id: string
+          is_active: boolean
+          max_profiles: number
+          name: string
+          price_monthly: number
+          price_yearly: number | null
+          sort_order: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          is_active?: boolean
+          max_profiles?: number
+          name: string
+          price_monthly: number
+          price_yearly?: number | null
+          sort_order?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          is_active?: boolean
+          max_profiles?: number
+          name?: string
+          price_monthly?: number
+          price_yearly?: number | null
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          family_role: Database["public"]["Enums"]["family_role"] | null
+          id: string
+          preferred_tracks: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          family_role?: Database["public"]["Enums"]["family_role"] | null
+          id: string
+          preferred_tracks?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          family_role?: Database["public"]["Enums"]["family_role"] | null
+          id?: string
+          preferred_tracks?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          discount_percent: number | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          uses: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          uses?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          uses?: number
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          plan_id: string | null
+          provider: string | null
+          provider_subscription_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan_id?: string | null
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan_id?: string | null
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      titles: {
+        Row: {
+          age_rating: string | null
+          backdrop_url: string | null
+          badges: string[] | null
+          cast_crew: Json | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          is_published: boolean
+          kind: Database["public"]["Enums"]["title_kind"]
+          long_description: string | null
+          poster_url: string | null
+          slug: string | null
+          synopsis: string | null
+          target_roles: Database["public"]["Enums"]["family_role"][] | null
+          title: string
+          track: string | null
+          trailer_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          age_rating?: string | null
+          backdrop_url?: string | null
+          badges?: string[] | null
+          cast_crew?: Json | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_published?: boolean
+          kind: Database["public"]["Enums"]["title_kind"]
+          long_description?: string | null
+          poster_url?: string | null
+          slug?: string | null
+          synopsis?: string | null
+          target_roles?: Database["public"]["Enums"]["family_role"][] | null
+          title: string
+          track?: string | null
+          trailer_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age_rating?: string | null
+          backdrop_url?: string | null
+          badges?: string[] | null
+          cast_crew?: Json | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_published?: boolean
+          kind?: Database["public"]["Enums"]["title_kind"]
+          long_description?: string | null
+          poster_url?: string | null
+          slug?: string | null
+          synopsis?: string | null
+          target_roles?: Database["public"]["Enums"]["family_role"][] | null
+          title?: string
+          track?: string | null
+          trailer_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      family_role: "father" | "mother" | "son" | "daughter"
+      title_kind: "movie" | "series" | "reel" | "influencer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +620,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      family_role: ["father", "mother", "son", "daughter"],
+      title_kind: ["movie", "series", "reel", "influencer"],
+    },
   },
 } as const
