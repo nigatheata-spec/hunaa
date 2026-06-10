@@ -8,7 +8,7 @@ export const Footer = () => {
           <div className="text-center md:text-right">
             <HunaLogo />
             <p className="text-muted-foreground text-sm mt-3 max-w-md">
-              منصة هنا — حيث تلتقي الحضارة الإسلامية بتقنيات المستقبل.
+              منصة هنا — من الحضارة الإسلامية إلى الواقع لنصنع المستقبل.
             </p>
           </div>
 
