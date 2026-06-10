@@ -18,7 +18,7 @@ export const Footer = () => {
           <Link
             to="/assistant"
             aria-label="المساعد التربوي"
-            className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-deep text-primary-foreground shadow-gold-lg border-2 border-background transition-transform duration-300 hover:scale-110 active:scale-95"
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary to-[hsl(38,70%,40%)] text-primary-foreground shadow-gold-lg border-2 border-background transition-transform duration-300 hover:scale-110 active:scale-95"
           >
             <Sparkles className="w-6 h-6" />
           </Link>
