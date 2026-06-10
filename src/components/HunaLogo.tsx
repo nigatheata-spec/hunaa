@@ -1,13 +1,13 @@
-import { Sparkles } from "lucide-react";
-
-export const HunaLogo = ({ className = "" }: { className?: string }) => {
+export const HunaLogo = ({ className = "", size = "default" }: { className?: string; size?: "sm" | "default" | "lg" }) => {
+  const sizes = { sm: "text-xl", default: "text-2xl", lg: "text-4xl" };
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-gold blur-md opacity-50" />
-        <Sparkles className="relative w-7 h-7 text-primary" strokeWidth={1.5} />
+    <div className={`inline-flex items-center gap-2.5 ${className}`}>
+      <div className="relative w-9 h-9 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-full bg-gradient-gold-shine opacity-90 animate-shimmer" />
+        <div className="absolute inset-[2px] rounded-full bg-background" />
+        <span className="relative font-serif-ar text-primary text-xl leading-none">ه</span>
       </div>
-      <span className="text-2xl font-bold text-gold-gradient tracking-wide">هُنا</span>
+      <span className={`font-bold text-gold-gradient tracking-wide ${sizes[size]}`}>هُنا</span>
     </div>
   );
 };
