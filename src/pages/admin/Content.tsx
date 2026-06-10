@@ -69,7 +69,7 @@ export default function AdminContent() {
               <div><Label>الوصف التفصيلي</Label><Textarea value={form.long_description} onChange={e => setForm({ ...form, long_description: e.target.value })} rows={4} /></div>
               <div><Label>رابط البوستر</Label><Input value={form.poster_url} onChange={e => setForm({ ...form, poster_url: e.target.value })} /></div>
               <div><Label>رابط الخلفية</Label><Input value={form.backdrop_url} onChange={e => setForm({ ...form, backdrop_url: e.target.value })} /></div>
-              <div><Label>رابط الإعلان</Label><Input value={form.trailer_url} onChange={e => setForm({ ...form, trailer_url: e.target.value })} /></div>
+              <div><Label>رابط الإعلان / يوتيوب</Label><Input value={form.trailer_url} onChange={e => setForm({ ...form, trailer_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." /><p className="text-xs text-muted-foreground mt-1">يدعم روابط يوتيوب مباشرة (سيتم تشغيلها مدمجة في صفحة المنتج).</p></div>
               <Button variant="hero" className="w-full" onClick={save}>حفظ</Button>
             </div>
           </DialogContent>
