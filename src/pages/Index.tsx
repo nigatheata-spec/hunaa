@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
+import { ReelsHero } from "@/components/ReelsHero";
 import { TracksSection } from "@/components/TracksSection";
 import { FamilySection } from "@/components/FamilySection";
 import { AIAssistantSection } from "@/components/AIAssistantSection";
@@ -11,7 +11,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main>
-        <Hero />
+        <ReelsHero />
         <section id="tracks"><TracksSection /></section>
         <section id="family"><FamilySection /></section>
         <section id="ai"><AIAssistantSection /></section>
