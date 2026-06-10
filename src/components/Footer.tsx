@@ -1,60 +1,48 @@
-import { Link } from "react-router-dom";
-import { HunaLogo } from "./HunaLogo";
+import { Link, useLocation } from "react-router-dom";
+import { Film, Tv, Users, Sparkles } from "lucide-react";
 
-const sections = [
-  { title: "اكتشف", links: [
-    { label: "أفلام", to: "/movies" },
-    { label: "مسلسلات", to: "/series" },
-    { label: "ريلز", to: "/reels" },
-    { label: "المؤثرون الأذكياء", to: "/influencers" },
-  ]},
-  { title: "المنصة", links: [
-    { label: "المساعد التربوي", to: "/assistant" },
-    { label: "الباقات والأسعار", to: "/pricing" },
-    { label: "ادعم المنصة", to: "/support" },
-    { label: "لوحة التحكم", to: "/admin" },
-  ]},
-  { title: "الأسرة", links: [
-    { label: "للأب", to: "/?role=father" },
-    { label: "للأم", to: "/?role=mother" },
-    { label: "للابن", to: "/?role=son" },
-    { label: "للبنت", to: "/?role=daughter" },
-  ]},
+const navItems = [
+  { label: "أفلام", to: "/movies", icon: Film },
+  { label: "مسلسلات", to: "/series", icon: Tv },
+  { label: "مؤثرون", to: "/influencers", icon: Users },
 ];
 
 export const Footer = () => {
+  const location = useLocation();
+
   return (
-    <footer className="relative border-t border-primary/20 bg-gradient-to-b from-card/30 to-background mt-20">
-      <div className="container mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-4 gap-10">
-          <div>
-            <HunaLogo />
-            <p className="text-muted-foreground text-sm mt-4 leading-relaxed">
-              من الحضارة الإسلامية إلى الواقع لنصنع المستقبل. منصة OTT عربية مدعومة بالذكاء الاصطناعي.
-            </p>
-            <p className="font-serif-ar text-primary/70 text-base mt-4">« هُنا حيث ينبض القلب بالمعرفة »</p>
-          </div>
-          {sections.map((s) => (
-            <div key={s.title}>
-              <h4 className="text-primary font-semibold mb-4 text-sm tracking-wider">{s.title}</h4>
-              <ul className="space-y-2.5">
-                {s.links.map((l) => (
-                  <li key={l.label}>
-                    <Link to={l.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">{l.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+    <footer className="sticky bottom-0 z-50 px-4 pb-4">
+      <div className="relative mx-auto max-w-md">
+        {/* Center AI circle — elevated above the bar */}
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 z-10">
+          <Link
+            to="/assistant"
+            aria-label="المساعد التربوي"
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary to-[hsl(38,70%,40%)] text-primary-foreground shadow-gold-lg border-2 border-background transition-transform duration-300 hover:scale-110 active:scale-95"
+          >
+            <Sparkles className="w-6 h-6" />
+          </Link>
         </div>
-        <div className="mt-12 pt-6 border-t border-primary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} منصة هنا. جميع الحقوق محفوظة.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-primary">الخصوصية</a>
-            <a href="#" className="hover:text-primary">الشروط</a>
-            <a href="#" className="hover:text-primary">تواصل</a>
-          </div>
-        </div>
+
+        {/* Rounded rectangle dock */}
+        <nav className="flex items-center justify-around rounded-3xl bg-card/80 backdrop-blur-xl border border-primary/20 shadow-card px-2 py-3">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-colors duration-200 ${
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </footer>
   );
