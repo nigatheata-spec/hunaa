@@ -198,11 +198,14 @@ export default function Assistant() {
     if (!user) { toast.error("سجّل دخولك أولاً"); return; }
     const text = suggestion.trim();
     if (!text) { toast.error("اكتب اقتراحك"); return; }
+    const role = activeThread === "father" || activeThread === "mother"
+      ? activeThread
+      : (children.find(c => c.id === activeThread)?.gender === "girl" ? "daughter" : "son");
     const { error } = await supabase.from("content_requests").insert({
       user_id: user.id,
       raw_request: text,
       track: "suggestion_admin",
-      family_role: familyRoleFor(activeThread) as "father" | "mother" | "child",
+      family_role: role,
     });
     if (error) { toast.error(error.message); return; }
     setSuggestion("");
