@@ -21,6 +21,7 @@ import Assistant from "./pages/Assistant.tsx";
 import AdminDashboard from "./pages/admin/Dashboard.tsx";
 import AdminContent from "./pages/admin/Content.tsx";
 import AdminRequests from "./pages/admin/Requests.tsx";
+import AdminSuggestions from "./pages/admin/Suggestions.tsx";
 import AdminInfluencers from "./pages/admin/Influencers.tsx";
 import AdminUsers from "./pages/admin/Users.tsx";
 import AdminPlans from "./pages/admin/Plans.tsx";
@@ -53,6 +54,8 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute adminOnly><AdminContent /></ProtectedRoute>} />
             <Route path="/admin/requests" element={<ProtectedRoute adminOnly><AdminRequests /></ProtectedRoute>} />
+            <Route path="/admin/suggestions" element={<ProtectedRoute adminOnly><AdminSuggestions /></ProtectedRoute>} />
+
             <Route path="/admin/influencers" element={<ProtectedRoute adminOnly><AdminInfluencers /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsers /></ProtectedRoute>} />
             <Route path="/admin/plans" element={<ProtectedRoute adminOnly><AdminPlans /></ProtectedRoute>} />

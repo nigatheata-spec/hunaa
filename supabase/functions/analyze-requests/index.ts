@@ -10,8 +10,12 @@ Deno.serve(async (req) => {
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    let track: string | null = null;
+    try { const body = await req.json(); track = body?.track ?? null; } catch { /* no body */ }
 
-    const { data: requests } = await supabase.from("content_requests").select("id, raw_request, family_role, track").order("created_at", { ascending: false }).limit(200);
+    let q = supabase.from("content_requests").select("id, raw_request, family_role, track").order("created_at", { ascending: false }).limit(200);
+    if (track) q = q.eq("track", track);
+    const { data: requests } = await q;
 
     if (!requests || requests.length === 0)
       return new Response(JSON.stringify({ summary: "لا توجد طلبات بعد.", details: "", stats: {} }), { headers: { ...corsHeaders, "Content-Type": "application/json" }});

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon } from "lucide-react";
+import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -27,12 +27,36 @@ export default function Assistant() {
   const [recommendations, setRecommendations] = useState<Rec[]>([]);
   const [openAddChild, setOpenAddChild] = useState(false);
   const [newChild, setNewChild] = useState({ name: "", age: "", gender: "boy" as "boy" | "girl", interests: "" });
+  const [openSuggest, setOpenSuggest] = useState(false);
+  const [suggestion, setSuggestion] = useState("");
+  const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
   const endRef = useRef<HTMLDivElement>(null);
+
+  const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
+    if (row.child_id) return row.child_id;
+    if (row.family_role === "father" || row.family_role === "mother") return row.family_role;
+    return null;
+  };
 
   const loadChildren = async () => {
     if (!user) return;
     const { data } = await supabase.from("children").select("*").eq("parent_id", user.id).order("created_at");
     setChildren((data ?? []) as Child[]);
+  };
+
+  const loadConversations = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("assistant_conversations").select("id, family_role, child_id, messages").eq("user_id", user.id);
+    const msgs: Record<string, Msg[]> = {};
+    const ids: Record<string, string> = {};
+    (data ?? []).forEach((r: { id: string; family_role: string | null; child_id: string | null; messages: unknown }) => {
+      const k = threadKey(r);
+      if (!k) return;
+      ids[k] = r.id;
+      msgs[k] = (r.messages as Msg[]) ?? [];
+    });
+    setThreadConvIds(ids);
+    setThreadMessages(msgs);
   };
 
   const loadRecs = async () => {
@@ -41,7 +65,7 @@ export default function Assistant() {
     setRecommendations((data ?? []) as Rec[]);
   };
 
-  useEffect(() => { loadChildren(); loadRecs(); }, [user]);
+  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); }, [user]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [threadMessages, activeThread]);
 
   const greetingFor = (key: ThreadKey): Msg => {
@@ -146,9 +170,47 @@ export default function Assistant() {
         }
       }
       await extractAndSave(acc);
+      await persistThread(activeThread, [...newMsgs, { role: "assistant", content: acc }]);
     } catch {
       toast.error("خطأ في الاتصال");
     } finally { setLoading(false); }
+  };
+
+  const persistThread = async (key: ThreadKey, msgs: Msg[]) => {
+    if (!user) return;
+    const existingId = threadConvIds[key];
+    const messagesJson = msgs as unknown as import("@/integrations/supabase/types").Json;
+    if (existingId) {
+      await supabase.from("assistant_conversations").update({ messages: messagesJson }).eq("id", existingId);
+    } else {
+      const { data } = await supabase.from("assistant_conversations").insert({
+        user_id: user.id,
+        messages: messagesJson,
+        family_role: key === "father" || key === "mother" ? key : "child",
+        child_id: key === "father" || key === "mother" ? null : key,
+        title: key === "father" ? "محادثة الأب" : key === "mother" ? "محادثة الأم" : `محادثة ${children.find(c => c.id === key)?.name ?? "الطفل"}`,
+      }).select("id").single();
+      if (data?.id) setThreadConvIds(s => ({ ...s, [key]: data.id }));
+    }
+  };
+
+  const sendSuggestion = async () => {
+    if (!user) { toast.error("سجّل دخولك أولاً"); return; }
+    const text = suggestion.trim();
+    if (!text) { toast.error("اكتب اقتراحك"); return; }
+    const role = activeThread === "father" || activeThread === "mother"
+      ? activeThread
+      : (children.find(c => c.id === activeThread)?.gender === "girl" ? "daughter" : "son");
+    const { error } = await supabase.from("content_requests").insert({
+      user_id: user.id,
+      raw_request: text,
+      track: "suggestion_admin",
+      family_role: role,
+    });
+    if (error) { toast.error(error.message); return; }
+    setSuggestion("");
+    setOpenSuggest(false);
+    toast.success("وصل اقتراحك للإدارة. شكراً لك 🌿");
   };
 
   const addChild = async () => {
@@ -228,6 +290,21 @@ export default function Assistant() {
                 </div>
                 <div><Label>الاهتمامات (اختياري)</Label><Textarea value={newChild.interests} onChange={e => setNewChild({ ...newChild, interests: e.target.value })} rows={2} placeholder="رياضة، رسم، قصص الأنبياء..." /></div>
                 <Button variant="hero" className="w-full" onClick={addChild}>حفظ</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={openSuggest} onOpenChange={setOpenSuggest}>
+            <DialogTrigger asChild>
+              <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm border border-dashed border-primary/40 text-primary hover:bg-primary/10 transition">
+                <MessageSquareHeart className="w-4 h-4" /> اقتراح للإدارة
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-card max-w-md" dir="rtl">
+              <DialogHeader><DialogTitle>تواصل مع إدارة منصة هنا</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">اكتب اقتراحك أو ملاحظتك أو محتوى تتمنى توفره. يصل مباشرة للإدارة ويُلخّص بالذكاء الاصطناعي ضمن مقترحات الجمهور.</p>
+                <Textarea value={suggestion} onChange={e => setSuggestion(e.target.value)} rows={5} placeholder="مثال: أتمنى محتوى عن قصص الصحابة للأطفال 7-10 سنوات..." />
+                <Button variant="hero" className="w-full" onClick={sendSuggestion}>إرسال للإدارة</Button>
               </div>
             </DialogContent>
           </Dialog>

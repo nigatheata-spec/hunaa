@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Film, Inbox, CreditCard, CreditCardIcon, Users, Heart, Bot, LogOut } from "lucide-react";
+import { LayoutDashboard, Film, Inbox, CreditCard, CreditCardIcon, Users, Heart, Bot, LogOut, MessageSquareHeart } from "lucide-react";
 import { HunaLogo } from "./HunaLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "./ui/button";
@@ -9,6 +9,7 @@ const links = [
   { to: "/admin", label: "نظرة عامة", icon: LayoutDashboard, end: true },
   { to: "/admin/content", label: "المحتوى", icon: Film },
   { to: "/admin/requests", label: "طلبات الجمهور", icon: Inbox },
+  { to: "/admin/suggestions", label: "مقترحات المستخدمين", icon: MessageSquareHeart },
   { to: "/admin/influencers", label: "المؤثرون الأذكياء", icon: Bot },
   { to: "/admin/users", label: "المستخدمون", icon: Users },
   { to: "/admin/plans", label: "الباقات والأكواد", icon: CreditCard },
