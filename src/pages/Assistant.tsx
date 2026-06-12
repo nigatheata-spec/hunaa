@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon } from "lucide-react";
+import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
