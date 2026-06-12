@@ -58,6 +58,9 @@ export type Database = {
       children: {
         Row: {
           age: number | null
+          assessment: Json | null
+          assessment_completed_at: string | null
+          avatar_url: string | null
           created_at: string
           gender: string | null
           id: string
@@ -65,10 +68,14 @@ export type Database = {
           name: string
           notes: string | null
           parent_id: string
+          traits: string | null
           updated_at: string
         }
         Insert: {
           age?: number | null
+          assessment?: Json | null
+          assessment_completed_at?: string | null
+          avatar_url?: string | null
           created_at?: string
           gender?: string | null
           id?: string
@@ -76,10 +83,14 @@ export type Database = {
           name: string
           notes?: string | null
           parent_id: string
+          traits?: string | null
           updated_at?: string
         }
         Update: {
           age?: number | null
+          assessment?: Json | null
+          assessment_completed_at?: string | null
+          avatar_url?: string | null
           created_at?: string
           gender?: string | null
           id?: string
@@ -87,6 +98,7 @@ export type Database = {
           name?: string
           notes?: string | null
           parent_id?: string
+          traits?: string | null
           updated_at?: string
         }
         Relationships: []
