@@ -6,13 +6,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart } from "lucide-react";
+import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart, ClipboardCheck, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
+import { CATEGORY_LABEL, type AssessmentResult } from "@/data/childAssessment";
 
 interface Msg { role: "user" | "assistant"; content: string }
-interface Child { id: string; name: string; age: number | null; gender: "boy" | "girl" | null; interests: string | null }
+interface Child {
+  id: string; name: string; age: number | null; gender: "boy" | "girl" | null; interests: string | null;
+  avatar_url?: string | null; traits?: string | null; assessment?: AssessmentResult | null; assessment_completed_at?: string | null;
+}
 interface Rec { id: string; suggested_title: string | null; reason: string | null; suggested_kind: string | null; topic: string | null }
 
 type ThreadKey = "father" | "mother" | string; // string => child id
@@ -30,6 +35,10 @@ export default function Assistant() {
   const [openSuggest, setOpenSuggest] = useState(false);
   const [suggestion, setSuggestion] = useState("");
   const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
+  const [openAssessment, setOpenAssessment] = useState(false);
+  const [openResults, setOpenResults] = useState(false);
+  const [editingTraits, setEditingTraits] = useState(false);
+  const [traitsDraft, setTraitsDraft] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
@@ -41,7 +50,7 @@ export default function Assistant() {
   const loadChildren = async () => {
     if (!user) return;
     const { data } = await supabase.from("children").select("*").eq("parent_id", user.id).order("created_at");
-    setChildren((data ?? []) as Child[]);
+    setChildren((data ?? []) as unknown as Child[]);
   };
 
   const loadConversations = async () => {
@@ -90,8 +99,15 @@ export default function Assistant() {
   const activeChildContext = (): string => {
     const child = children.find(c => c.id === activeChildId());
     if (!child) return "";
-    return `سياق الطفل: الاسم ${child.name}، العمر ${child.age ?? "غير محدد"}، النوع ${child.gender === "girl" ? "بنت" : "ابن"}، الاهتمامات: ${child.interests ?? "لم تُذكر بعد"}.`;
+    let ctx = `سياق الطفل: الاسم ${child.name}، العمر ${child.age ?? "غير محدد"}، النوع ${child.gender === "girl" ? "بنت" : "ابن"}، الاهتمامات: ${child.interests ?? "لم تُذكر بعد"}.`;
+    if (child.traits) ctx += ` صفات بارزة: ${child.traits}.`;
+    if (child.assessment?.summary) ctx += ` نتائج اختبار الشخصية (٣٦ سؤالاً): ${child.assessment.summary}.`;
+    return ctx;
   };
+
+  const activeChild = children.find(c => c.id === activeChildId()) || null;
+  const childAvatar = (c: Child) =>
+    c.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(c.name)}&backgroundType=gradientLinear`;
 
   // Parse assistant text to extract structured recommendations and save
   const extractAndSave = async (text: string) => {
@@ -310,6 +326,69 @@ export default function Assistant() {
           </Dialog>
         </div>
 
+        {/* Child profile sub-card — shown when a child thread is active */}
+        {activeChild && (
+          <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
+            <div className="flex items-start gap-4 flex-wrap">
+              <img
+                src={childAvatar(activeChild)}
+                alt={activeChild.name}
+                className="w-20 h-20 rounded-full border-2 border-primary/40 shadow-gold bg-secondary/40 object-cover"
+              />
+              <div className="flex-1 min-w-[200px]">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-lg font-bold text-primary">{activeChild.name}</h3>
+                  {activeChild.age && <span className="text-xs text-muted-foreground">{activeChild.age} سنة</span>}
+                  <span className="text-xs text-muted-foreground">• {activeChild.gender === "girl" ? "بنت" : "ابن"}</span>
+                  {activeChild.assessment_completed_at && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">شخصيته مفهومة ✓</span>
+                  )}
+                </div>
+                {editingTraits ? (
+                  <div className="mt-2 flex gap-2 items-start">
+                    <Textarea
+                      value={traitsDraft}
+                      onChange={e => setTraitsDraft(e.target.value)}
+                      rows={2}
+                      placeholder="مثال: حنون، فضولي، يحب الرسم وكرة القدم..."
+                      className="text-xs"
+                    />
+                    <div className="flex flex-col gap-1">
+                      <Button size="sm" variant="hero" onClick={async () => {
+                        const { error } = await supabase.from("children").update({ traits: traitsDraft || null }).eq("id", activeChild.id);
+                        if (error) { toast.error(error.message); return; }
+                        setEditingTraits(false); loadChildren(); toast.success("تم حفظ الصفات");
+                      }}>حفظ</Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingTraits(false)}>إلغاء</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-foreground/80 mt-1 leading-relaxed">
+                    {activeChild.traits || activeChild.interests || "لم تُسجَّل صفات بعد. اضغط (صفاتي) لإضافتها."}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2 w-full sm:w-auto">
+                <Button size="sm" variant="hero" onClick={() => setOpenAssessment(true)}>
+                  <ClipboardCheck className="w-4 h-4 ml-1.5" />
+                  {activeChild.assessment_completed_at ? "إعادة الاختبار" : "إجراء الاختبار (٣٦ سؤال)"}
+                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => { setTraitsDraft(activeChild.traits || ""); setEditingTraits(true); }}>
+                    صفاتي
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1" disabled={!activeChild.assessment} onClick={() => setOpenResults(true)}>
+                    <BarChart3 className="w-4 h-4 ml-1" /> فهم شخصيتي
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-3 text-center">
+              الاختبار اختياري — يساعد المساعد التربوي على ترشيح محتوى أدق لـ{activeChild.name}.
+            </p>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-5">
           {/* Chat */}
           <div className="lg:col-span-2">
@@ -359,6 +438,50 @@ export default function Assistant() {
           </aside>
         </div>
       </section>
+
+      {activeChild && (
+        <ChildAssessmentDialog
+          open={openAssessment}
+          onOpenChange={setOpenAssessment}
+          childName={activeChild.name}
+          onComplete={async (result) => {
+            const { error } = await supabase.from("children").update({
+              assessment: result as unknown as import("@/integrations/supabase/types").Json,
+              assessment_completed_at: new Date().toISOString(),
+            }).eq("id", activeChild.id);
+            if (error) { toast.error(error.message); return; }
+            await loadChildren();
+            toast.success(`تم فهم شخصية ${activeChild.name} ✓`);
+          }}
+        />
+      )}
+
+      {activeChild?.assessment && (
+        <Dialog open={openResults} onOpenChange={setOpenResults}>
+          <DialogContent className="bg-card max-w-md" dir="rtl">
+            <DialogHeader><DialogTitle>شخصية {activeChild.name}</DialogTitle></DialogHeader>
+            <div className="space-y-3">
+              {(Object.keys(activeChild.assessment.scores) as Array<keyof typeof activeChild.assessment.scores>).map(cat => {
+                const s = activeChild.assessment!.scores[cat];
+                return (
+                  <div key={cat}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="font-medium">{CATEGORY_LABEL[cat]}</span>
+                      <span className="text-primary font-bold">{s.percent}%</span>
+                    </div>
+                    <div className="h-2 bg-secondary/60 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-gold" style={{ width: `${s.percent}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+              <p className="text-[11px] text-muted-foreground text-center pt-2">
+                هذه النتائج تُغذّي الذكاء الاصطناعي ليرشّح محتوى أنسب لـ{activeChild.name} في كل المسارات.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </SiteLayout>
   );
 }
