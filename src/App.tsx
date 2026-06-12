@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing.tsx";
 import Support from "./pages/Support.tsx";
 import Assistant from "./pages/Assistant.tsx";
 import TrackDetail from "./pages/TrackDetail.tsx";
+import IdeaDetail from "./pages/IdeaDetail.tsx";
 import AdminDashboard from "./pages/admin/Dashboard.tsx";
 import AdminContent from "./pages/admin/Content.tsx";
 import AdminRequests from "./pages/admin/Requests.tsx";

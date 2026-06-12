@@ -95,7 +95,7 @@ export default function TrackDetail() {
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{idea.tagline}</p>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       </section>
