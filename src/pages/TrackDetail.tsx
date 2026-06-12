@@ -67,11 +67,10 @@ export default function TrackDetail() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {track.ideas.map((idea, i) => (
-            <button
+            <Link
               key={i}
-              type="button"
-              onClick={() => openIdea(idea)}
-              className="group relative text-right rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+              to={`/tracks/${track.slug}/idea/${i}`}
+              className="group relative block text-right rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
