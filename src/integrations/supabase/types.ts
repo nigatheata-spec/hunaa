@@ -16,7 +16,9 @@ export type Database = {
     Tables: {
       assistant_conversations: {
         Row: {
+          child_id: string | null
           created_at: string
+          family_role: string | null
           id: string
           messages: Json
           title: string | null
@@ -24,7 +26,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          child_id?: string | null
           created_at?: string
+          family_role?: string | null
           id?: string
           messages?: Json
           title?: string | null
@@ -32,12 +36,58 @@ export type Database = {
           user_id: string
         }
         Update: {
+          child_id?: string | null
           created_at?: string
+          family_role?: string | null
           id?: string
           messages?: Json
           title?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_conversations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      children: {
+        Row: {
+          age: number | null
+          created_at: string
+          gender: string | null
+          id: string
+          interests: string | null
+          name: string
+          notes: string | null
+          parent_id: string
+          updated_at: string
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          gender?: string | null
+          id?: string
+          interests?: string | null
+          name: string
+          notes?: string | null
+          parent_id: string
+          updated_at?: string
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          gender?: string | null
+          id?: string
+          interests?: string | null
+          name?: string
+          notes?: string | null
+          parent_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -349,6 +399,60 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendations: {
+        Row: {
+          child_id: string | null
+          created_at: string
+          family_member: string | null
+          id: string
+          reason: string | null
+          suggested_kind: string | null
+          suggested_title: string | null
+          title_id: string | null
+          topic: string | null
+          user_id: string
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string
+          family_member?: string | null
+          id?: string
+          reason?: string | null
+          suggested_kind?: string | null
+          suggested_title?: string | null
+          title_id?: string | null
+          topic?: string | null
+          user_id: string
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string
+          family_member?: string | null
+          id?: string
+          reason?: string | null
+          suggested_kind?: string | null
+          suggested_title?: string | null
+          title_id?: string | null
+          topic?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recommendations_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -396,6 +500,7 @@ export type Database = {
       titles: {
         Row: {
           age_rating: string | null
+          audience: string[] | null
           backdrop_url: string | null
           badges: string[] | null
           cast_crew: Json | null
@@ -407,6 +512,7 @@ export type Database = {
           long_description: string | null
           poster_url: string | null
           slug: string | null
+          stars: string[] | null
           synopsis: string | null
           target_roles: Database["public"]["Enums"]["family_role"][] | null
           title: string
@@ -416,6 +522,7 @@ export type Database = {
         }
         Insert: {
           age_rating?: string | null
+          audience?: string[] | null
           backdrop_url?: string | null
           badges?: string[] | null
           cast_crew?: Json | null
@@ -427,6 +534,7 @@ export type Database = {
           long_description?: string | null
           poster_url?: string | null
           slug?: string | null
+          stars?: string[] | null
           synopsis?: string | null
           target_roles?: Database["public"]["Enums"]["family_role"][] | null
           title: string
@@ -436,6 +544,7 @@ export type Database = {
         }
         Update: {
           age_rating?: string | null
+          audience?: string[] | null
           backdrop_url?: string | null
           badges?: string[] | null
           cast_crew?: Json | null
@@ -447,6 +556,7 @@ export type Database = {
           long_description?: string | null
           poster_url?: string | null
           slug?: string | null
+          stars?: string[] | null
           synopsis?: string | null
           target_roles?: Database["public"]["Enums"]["family_role"][] | null
           title?: string
