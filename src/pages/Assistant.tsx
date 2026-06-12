@@ -38,6 +38,7 @@ export default function Assistant() {
   const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
   const [openAssessment, setOpenAssessment] = useState(false);
   const [openResults, setOpenResults] = useState(false);
+  const [expandedCat, setExpandedCat] = useState<import("@/data/childAssessment").AssessmentCategory | null>(null);
   const [editingTraits, setEditingTraits] = useState(false);
   const [traitsDraft, setTraitsDraft] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
