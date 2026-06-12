@@ -1,31 +1,12 @@
-import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
+import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft, Play, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { getTrack, type TrackIdea } from "@/data/tracks";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { getTrack } from "@/data/tracks";
 
 export default function TrackDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const track = slug ? getTrack(slug) : undefined;
   if (!track) return <Navigate to="/" replace />;
-
-  const openIdea = async (idea: TrackIdea) => {
-    // Try to find a real title matching the idea name; otherwise open the catalog.
-    const { data } = await supabase
-      .from("titles")
-      .select("id")
-      .ilike("title", `%${idea.title}%`)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (data?.id) {
-      navigate(`/title/${data.id}`);
-    } else {
-      toast.info("هذه فكرة قادمة قريباً — تصفّح المحتوى المتاح حالياً", { duration: 3000 });
-      navigate("/movies");
-    }
-  };
 
   return (
     <SiteLayout>
