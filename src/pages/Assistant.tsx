@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
-import { CATEGORY_LABEL, type AssessmentResult } from "@/data/childAssessment";
+import { CATEGORY_LABEL, categoryBrief, categoryDetail, type AssessmentResult } from "@/data/childAssessment";
 
 interface Msg { role: "user" | "assistant"; content: string }
 interface Child {
