@@ -43,6 +43,8 @@ export default function Assistant() {
   const [expandedCat, setExpandedCat] = useState<import("@/data/childAssessment").AssessmentCategory | null>(null);
   const [editingTraits, setEditingTraits] = useState(false);
   const [traitsDraft, setTraitsDraft] = useState("");
+  const [profile, setProfile] = useState<{ father_avatar_url: string | null; mother_avatar_url: string | null } | null>(null);
+  const [searchParams] = useSearchParams();
   const endRef = useRef<HTMLDivElement>(null);
 
   const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
@@ -78,8 +80,29 @@ export default function Assistant() {
     setRecommendations((data ?? []) as Rec[]);
   };
 
-  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); }, [user]);
+  const loadProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("profiles").select("father_avatar_url, mother_avatar_url").eq("id", user.id).maybeSingle();
+    if (data) setProfile(data as { father_avatar_url: string | null; mother_avatar_url: string | null });
+  };
+
+  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); loadProfile(); }, [user]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [threadMessages, activeThread]);
+
+  // Honor ?thread= from URL (father | mother | son | daughter | <childId>)
+  useEffect(() => {
+    const t = searchParams.get("thread");
+    if (!t) return;
+    if (t === "father" || t === "mother") { setActiveThread(t); return; }
+    if (t === "son" || t === "daughter") {
+      const target = children.find(c => c.gender === (t === "son" ? "boy" : "girl"));
+      if (target) setActiveThread(target.id);
+      else setOpenAddChild(true);
+      return;
+    }
+    // assume child id
+    if (children.some(c => c.id === t)) setActiveThread(t);
+  }, [searchParams, children]);
 
   const greetingFor = (key: ThreadKey): Msg => {
     if (key === "father") return { role: "assistant", content: "السلام عليكم. أنا مساعدك التربوي الذكي في منصة هنا 🌿\nأخبرني عن نفسك كأب وعن همومك التربوية وأبنائك، وسأرشّح لك محتوى يناسب ما تريد بناءه فيهم أو فيك." };
