@@ -27,12 +27,36 @@ export default function Assistant() {
   const [recommendations, setRecommendations] = useState<Rec[]>([]);
   const [openAddChild, setOpenAddChild] = useState(false);
   const [newChild, setNewChild] = useState({ name: "", age: "", gender: "boy" as "boy" | "girl", interests: "" });
+  const [openSuggest, setOpenSuggest] = useState(false);
+  const [suggestion, setSuggestion] = useState("");
+  const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
   const endRef = useRef<HTMLDivElement>(null);
+
+  const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
+    if (row.child_id) return row.child_id;
+    if (row.family_role === "father" || row.family_role === "mother") return row.family_role;
+    return null;
+  };
 
   const loadChildren = async () => {
     if (!user) return;
     const { data } = await supabase.from("children").select("*").eq("parent_id", user.id).order("created_at");
     setChildren((data ?? []) as Child[]);
+  };
+
+  const loadConversations = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("assistant_conversations").select("id, family_role, child_id, messages").eq("user_id", user.id);
+    const msgs: Record<string, Msg[]> = {};
+    const ids: Record<string, string> = {};
+    (data ?? []).forEach((r: { id: string; family_role: string | null; child_id: string | null; messages: unknown }) => {
+      const k = threadKey(r);
+      if (!k) return;
+      ids[k] = r.id;
+      msgs[k] = (r.messages as Msg[]) ?? [];
+    });
+    setThreadConvIds(ids);
+    setThreadMessages(msgs);
   };
 
   const loadRecs = async () => {
@@ -41,7 +65,7 @@ export default function Assistant() {
     setRecommendations((data ?? []) as Rec[]);
   };
 
-  useEffect(() => { loadChildren(); loadRecs(); }, [user]);
+  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); }, [user]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [threadMessages, activeThread]);
 
   const greetingFor = (key: ThreadKey): Msg => {
