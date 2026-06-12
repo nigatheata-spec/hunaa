@@ -1,12 +1,31 @@
-import { Link, useParams, Navigate } from "react-router-dom";
+import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
 import { ArrowLeft, Play, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { getTrack } from "@/data/tracks";
+import { getTrack, type TrackIdea } from "@/data/tracks";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function TrackDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const track = slug ? getTrack(slug) : undefined;
   if (!track) return <Navigate to="/" replace />;
+
+  const openIdea = async (idea: TrackIdea) => {
+    // Try to find a real title matching the idea name; otherwise open the catalog.
+    const { data } = await supabase
+      .from("titles")
+      .select("id")
+      .ilike("title", `%${idea.title}%`)
+      .eq("is_published", true)
+      .maybeSingle();
+    if (data?.id) {
+      navigate(`/title/${data.id}`);
+    } else {
+      toast.info("هذه فكرة قادمة قريباً — تصفّح المحتوى المتاح حالياً", { duration: 3000 });
+      navigate("/movies");
+    }
+  };
 
   return (
     <SiteLayout>
@@ -67,9 +86,11 @@ export default function TrackDetail() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {track.ideas.map((idea, i) => (
-            <article
+            <button
               key={i}
-              className="group relative rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500"
+              type="button"
+              onClick={() => openIdea(idea)}
+              className="group relative text-right rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
@@ -84,9 +105,9 @@ export default function TrackDetail() {
                 <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-background/70 backdrop-blur text-primary text-[10px] font-bold">
                   فكرة {String(i + 1).padStart(2, "0")}
                 </div>
-                <button className="absolute bottom-3 left-3 inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-gold-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+                <span className="absolute bottom-3 left-3 inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-gold-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
                   <Play className="w-4 h-4" fill="currentColor" />
-                </button>
+                </span>
               </div>
               <div className="p-4">
                 <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
@@ -94,7 +115,7 @@ export default function TrackDetail() {
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{idea.tagline}</p>
               </div>
-            </article>
+            </button>
           ))}
         </div>
       </section>
