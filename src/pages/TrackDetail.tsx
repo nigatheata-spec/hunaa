@@ -16,8 +16,8 @@ export default function TrackDetail() {
     const { data } = await supabase
       .from("titles")
       .select("id")
-      .ilike("name_ar", `%${idea.title}%`)
-      .limit(1)
+      .ilike("title", `%${idea.title}%`)
+      .eq("is_published", true)
       .maybeSingle();
     if (data?.id) {
       navigate(`/title/${data.id}`);
