@@ -6,13 +6,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart } from "lucide-react";
+import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart, ClipboardCheck, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
+import { CATEGORY_LABEL, type AssessmentResult } from "@/data/childAssessment";
 
 interface Msg { role: "user" | "assistant"; content: string }
-interface Child { id: string; name: string; age: number | null; gender: "boy" | "girl" | null; interests: string | null }
+interface Child {
+  id: string; name: string; age: number | null; gender: "boy" | "girl" | null; interests: string | null;
+  avatar_url?: string | null; traits?: string | null; assessment?: AssessmentResult | null; assessment_completed_at?: string | null;
+}
 interface Rec { id: string; suggested_title: string | null; reason: string | null; suggested_kind: string | null; topic: string | null }
 
 type ThreadKey = "father" | "mother" | string; // string => child id
