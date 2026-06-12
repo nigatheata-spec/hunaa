@@ -353,15 +353,70 @@ export default function Assistant() {
           </Dialog>
         </div>
 
+        {/* Parent profile sub-card — shown when father/mother thread active */}
+        {(activeThread === "father" || activeThread === "mother") && (
+          <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
+            <div className="flex items-center gap-4 flex-wrap">
+              {user ? (
+                <AvatarPicker
+                  kind={activeThread === "father" ? "father" : "mother"}
+                  currentUrl={activeThread === "father" ? profile?.father_avatar_url : profile?.mother_avatar_url}
+                  seed={user.id + activeThread}
+                  label={activeThread === "father" ? "اختر صورة الأب" : "اختر صورة الأم"}
+                  size="md"
+                  onSelect={async (url) => {
+                    const field = activeThread === "father" ? "father_avatar_url" : "mother_avatar_url";
+                    const { error } = await supabase.from("profiles").upsert({ id: user.id, [field]: url }, { onConflict: "id" });
+                    if (error) { toast.error(error.message); return; }
+                    await loadProfile();
+                    toast.success("تم حفظ الصورة");
+                  }}
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-secondary/40 border-2 border-primary/40 flex items-center justify-center text-3xl">
+                  {activeThread === "father" ? "👨" : "👩"}
+                </div>
+              )}
+              <div className="flex-1 min-w-[200px]">
+                <h3 className="text-lg font-bold text-primary">
+                  {activeThread === "father" ? "بروفايل الأب" : "بروفايل الأم"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  {activeThread === "father"
+                    ? "محادثة خاصة بك — يتذكر المساعد همومك التربوية ويرشّح محتوى مناسباً."
+                    : "محادثة خاصة بكِ — يتذكر المساعد رسالتكِ التربوية ويُخصّص الترشيحات."}
+                </p>
+                {!user && (
+                  <p className="text-[11px] text-primary mt-2">
+                    <Link to="/auth" className="hover:underline">سجّل دخولك</Link> لحفظ الصورة والمحادثة.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Child profile sub-card — shown when a child thread is active */}
         {activeChild && (
           <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
             <div className="flex items-start gap-4 flex-wrap">
-              <img
-                src={childAvatar(activeChild)}
-                alt={activeChild.name}
-                className="w-20 h-20 rounded-full border-2 border-primary/40 shadow-gold bg-secondary/40 object-cover"
+              <AvatarPicker
+                kind={activeChild.gender === "girl" ? "girl" : "boy"}
+                currentUrl={activeChild.avatar_url}
+                seed={activeChild.id}
+                label={`اختر صورة ${activeChild.name}`}
+                size="md"
+                onSelect={async (url) => {
+                  const { error } = await supabase.from("children").update({ avatar_url: url }).eq("id", activeChild.id);
+                  if (error) { toast.error(error.message); return; }
+                  await loadChildren();
+                  toast.success("تم حفظ الصورة");
+                }}
               />
+              {/* keep layout: hidden placeholder removed — picker replaces img */}
+              <div style={{ display: "none" }} aria-hidden>
+                <img src={childAvatar(activeChild)} alt="" />
+              </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-lg font-bold text-primary">{activeChild.name}</h3>
