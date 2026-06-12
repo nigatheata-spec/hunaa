@@ -351,7 +351,9 @@ export type Database = {
           created_at: string
           display_name: string | null
           family_role: Database["public"]["Enums"]["family_role"] | null
+          father_avatar_url: string | null
           id: string
+          mother_avatar_url: string | null
           preferred_tracks: string[] | null
           updated_at: string
         }
@@ -360,7 +362,9 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           family_role?: Database["public"]["Enums"]["family_role"] | null
+          father_avatar_url?: string | null
           id: string
+          mother_avatar_url?: string | null
           preferred_tracks?: string[] | null
           updated_at?: string
         }
@@ -369,7 +373,9 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           family_role?: Database["public"]["Enums"]["family_role"] | null
+          father_avatar_url?: string | null
           id?: string
+          mother_avatar_url?: string | null
           preferred_tracks?: string[] | null
           updated_at?: string
         }
