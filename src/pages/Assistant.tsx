@@ -326,6 +326,69 @@ export default function Assistant() {
           </Dialog>
         </div>
 
+        {/* Child profile sub-card — shown when a child thread is active */}
+        {activeChild && (
+          <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
+            <div className="flex items-start gap-4 flex-wrap">
+              <img
+                src={childAvatar(activeChild)}
+                alt={activeChild.name}
+                className="w-20 h-20 rounded-full border-2 border-primary/40 shadow-gold bg-secondary/40 object-cover"
+              />
+              <div className="flex-1 min-w-[200px]">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-lg font-bold text-primary">{activeChild.name}</h3>
+                  {activeChild.age && <span className="text-xs text-muted-foreground">{activeChild.age} سنة</span>}
+                  <span className="text-xs text-muted-foreground">• {activeChild.gender === "girl" ? "بنت" : "ابن"}</span>
+                  {activeChild.assessment_completed_at && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">شخصيته مفهومة ✓</span>
+                  )}
+                </div>
+                {editingTraits ? (
+                  <div className="mt-2 flex gap-2 items-start">
+                    <Textarea
+                      value={traitsDraft}
+                      onChange={e => setTraitsDraft(e.target.value)}
+                      rows={2}
+                      placeholder="مثال: حنون، فضولي، يحب الرسم وكرة القدم..."
+                      className="text-xs"
+                    />
+                    <div className="flex flex-col gap-1">
+                      <Button size="sm" variant="hero" onClick={async () => {
+                        const { error } = await supabase.from("children").update({ traits: traitsDraft || null }).eq("id", activeChild.id);
+                        if (error) { toast.error(error.message); return; }
+                        setEditingTraits(false); loadChildren(); toast.success("تم حفظ الصفات");
+                      }}>حفظ</Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingTraits(false)}>إلغاء</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-foreground/80 mt-1 leading-relaxed">
+                    {activeChild.traits || activeChild.interests || "لم تُسجَّل صفات بعد. اضغط (صفاتي) لإضافتها."}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2 w-full sm:w-auto">
+                <Button size="sm" variant="hero" onClick={() => setOpenAssessment(true)}>
+                  <ClipboardCheck className="w-4 h-4 ml-1.5" />
+                  {activeChild.assessment_completed_at ? "إعادة الاختبار" : "إجراء الاختبار (٣٦ سؤال)"}
+                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => { setTraitsDraft(activeChild.traits || ""); setEditingTraits(true); }}>
+                    صفاتي
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1" disabled={!activeChild.assessment} onClick={() => setOpenResults(true)}>
+                    <BarChart3 className="w-4 h-4 ml-1" /> فهم شخصيتي
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-3 text-center">
+              الاختبار اختياري — يساعد المساعد التربوي على ترشيح محتوى أدق لـ{activeChild.name}.
+            </p>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-5">
           {/* Chat */}
           <div className="lg:col-span-2">
