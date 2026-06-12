@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
-import { CATEGORY_LABEL, type AssessmentResult } from "@/data/childAssessment";
+import { CATEGORY_LABEL, categoryBrief, categoryDetail, type AssessmentResult } from "@/data/childAssessment";
 
 interface Msg { role: "user" | "assistant"; content: string }
 interface Child {
@@ -38,6 +38,7 @@ export default function Assistant() {
   const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
   const [openAssessment, setOpenAssessment] = useState(false);
   const [openResults, setOpenResults] = useState(false);
+  const [expandedCat, setExpandedCat] = useState<import("@/data/childAssessment").AssessmentCategory | null>(null);
   const [editingTraits, setEditingTraits] = useState(false);
   const [traitsDraft, setTraitsDraft] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
@@ -486,15 +487,34 @@ export default function Assistant() {
             <div className="space-y-3">
               {(Object.keys(activeChild.assessment.scores) as Array<keyof typeof activeChild.assessment.scores>).map(cat => {
                 const s = activeChild.assessment!.scores[cat];
+                const isOpen = expandedCat === cat;
                 return (
-                  <div key={cat}>
-                    <div className="flex justify-between text-xs mb-1">
+                  <div key={cat} className="rounded-lg border border-border/40 p-3 bg-secondary/20">
+                    <div className="flex justify-between items-center text-xs mb-1">
                       <span className="font-medium">{CATEGORY_LABEL[cat]}</span>
                       <span className="text-primary font-bold">{s.percent}%</span>
                     </div>
-                    <div className="h-2 bg-secondary/60 rounded-full overflow-hidden">
+                    <div className="h-2 bg-secondary/60 rounded-full overflow-hidden mb-2">
                       <div className="h-full bg-gradient-gold" style={{ width: `${s.percent}%` }} />
                     </div>
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-[11px] text-muted-foreground leading-relaxed flex-1">
+                        {categoryBrief(cat, s.percent)}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedCat(isOpen ? null : cat)}
+                        className="shrink-0 w-6 h-6 rounded-full bg-primary/15 hover:bg-primary/25 text-primary flex items-center justify-center text-sm leading-none transition"
+                        aria-label={isOpen ? "إخفاء التفاصيل" : "عرض التفاصيل"}
+                      >
+                        {isOpen ? "−" : "+"}
+                      </button>
+                    </div>
+                    {isOpen && (
+                      <p className="text-[11px] text-foreground/80 leading-relaxed mt-2 pt-2 border-t border-border/30">
+                        {categoryDetail(cat, s.percent)}
+                      </p>
+                    )}
                   </div>
                 );
               })}
