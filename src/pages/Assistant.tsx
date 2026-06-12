@@ -179,17 +179,17 @@ export default function Assistant() {
   const persistThread = async (key: ThreadKey, msgs: Msg[]) => {
     if (!user) return;
     const existingId = threadConvIds[key];
+    const messagesJson = msgs as unknown as import("@/integrations/supabase/types").Json;
     if (existingId) {
-      await supabase.from("assistant_conversations").update({ messages: msgs }).eq("id", existingId);
+      await supabase.from("assistant_conversations").update({ messages: messagesJson }).eq("id", existingId);
     } else {
-      const payload = {
+      const { data } = await supabase.from("assistant_conversations").insert({
         user_id: user.id,
-        messages: msgs,
+        messages: messagesJson,
         family_role: key === "father" || key === "mother" ? key : "child",
         child_id: key === "father" || key === "mother" ? null : key,
         title: key === "father" ? "محادثة الأب" : key === "mother" ? "محادثة الأم" : `محادثة ${children.find(c => c.id === key)?.name ?? "الطفل"}`,
-      };
-      const { data } = await supabase.from("assistant_conversations").insert(payload).select("id").single();
+      }).select("id").single();
       if (data?.id) setThreadConvIds(s => ({ ...s, [key]: data.id }));
     }
   };
