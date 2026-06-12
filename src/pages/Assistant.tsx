@@ -170,9 +170,44 @@ export default function Assistant() {
         }
       }
       await extractAndSave(acc);
+      await persistThread(activeThread, [...newMsgs, { role: "assistant", content: acc }]);
     } catch {
       toast.error("خطأ في الاتصال");
     } finally { setLoading(false); }
+  };
+
+  const persistThread = async (key: ThreadKey, msgs: Msg[]) => {
+    if (!user) return;
+    const existingId = threadConvIds[key];
+    if (existingId) {
+      await supabase.from("assistant_conversations").update({ messages: msgs }).eq("id", existingId);
+    } else {
+      const payload = {
+        user_id: user.id,
+        messages: msgs,
+        family_role: key === "father" || key === "mother" ? key : "child",
+        child_id: key === "father" || key === "mother" ? null : key,
+        title: key === "father" ? "محادثة الأب" : key === "mother" ? "محادثة الأم" : `محادثة ${children.find(c => c.id === key)?.name ?? "الطفل"}`,
+      };
+      const { data } = await supabase.from("assistant_conversations").insert(payload).select("id").single();
+      if (data?.id) setThreadConvIds(s => ({ ...s, [key]: data.id }));
+    }
+  };
+
+  const sendSuggestion = async () => {
+    if (!user) { toast.error("سجّل دخولك أولاً"); return; }
+    const text = suggestion.trim();
+    if (!text) { toast.error("اكتب اقتراحك"); return; }
+    const { error } = await supabase.from("content_requests").insert({
+      user_id: user.id,
+      raw_request: text,
+      track: "suggestion_admin",
+      family_role: familyRoleFor(activeThread) as "father" | "mother" | "child",
+    });
+    if (error) { toast.error(error.message); return; }
+    setSuggestion("");
+    setOpenSuggest(false);
+    toast.success("وصل اقتراحك للإدارة. شكراً لك 🌿");
   };
 
   const addChild = async () => {
