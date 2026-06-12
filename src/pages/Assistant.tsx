@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart, ClipboardCheck, BarChart3 } from "lucide-react";
+import { Send, Sparkles, User as UserIcon, Plus, Baby, User2, UserRound, Users as UsersIcon, MessageSquareHeart, ClipboardCheck, BarChart3, Info } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -424,13 +425,35 @@ export default function Assistant() {
                 <p className="text-xs text-muted-foreground">ابدأ محادثة واطلب ترشيحاً وسيظهر هنا.</p>
               ) : (
                 <ul className="space-y-3">
-                  {recommendations.map(r => (
-                    <li key={r.id} className="bg-secondary/40 rounded-xl p-3 border border-primary/10">
-                      <p className="text-sm font-semibold text-primary">{r.suggested_title}</p>
-                      {r.suggested_kind && <p className="text-[10px] text-muted-foreground">{r.suggested_kind}</p>}
-                      {r.reason && <p className="text-xs text-foreground/80 mt-1 leading-relaxed">{r.reason}</p>}
-                    </li>
-                  ))}
+                  {recommendations.map(r => {
+                    const summary = r.reason
+                      ? (r.reason.length > 60 ? r.reason.slice(0, 58) + "…" : r.reason)
+                      : "لا يوجد ملخص";
+                    return (
+                      <li key={r.id} className="bg-secondary/40 rounded-xl p-3 border border-primary/10">
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-primary">{r.suggested_title}</p>
+                            {r.suggested_kind && <p className="text-[10px] text-muted-foreground">{r.suggested_kind}</p>}
+                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/20 transition" title="تفاصيل الترشيح">
+                                <Info className="w-3 h-3" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 bg-card border border-primary/20 shadow-gold" align="end" side="left">
+                              <p className="text-xs font-semibold text-primary mb-1">{r.suggested_title}</p>
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                {r.reason || "لم يُسجَّل تفصيل لهذا الترشيح."}
+                              </p>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <p className="text-xs text-foreground/70 mt-1 leading-relaxed">{summary}</p>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
               <Link to="/movies" className="block text-center text-xs text-primary mt-4 hover:underline">تصفّح المكتبة كاملة ←</Link>
