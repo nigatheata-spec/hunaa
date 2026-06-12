@@ -95,8 +95,15 @@ export default function Assistant() {
   const activeChildContext = (): string => {
     const child = children.find(c => c.id === activeChildId());
     if (!child) return "";
-    return `سياق الطفل: الاسم ${child.name}، العمر ${child.age ?? "غير محدد"}، النوع ${child.gender === "girl" ? "بنت" : "ابن"}، الاهتمامات: ${child.interests ?? "لم تُذكر بعد"}.`;
+    let ctx = `سياق الطفل: الاسم ${child.name}، العمر ${child.age ?? "غير محدد"}، النوع ${child.gender === "girl" ? "بنت" : "ابن"}، الاهتمامات: ${child.interests ?? "لم تُذكر بعد"}.`;
+    if (child.traits) ctx += ` صفات بارزة: ${child.traits}.`;
+    if (child.assessment?.summary) ctx += ` نتائج اختبار الشخصية (٣٦ سؤالاً): ${child.assessment.summary}.`;
+    return ctx;
   };
+
+  const activeChild = children.find(c => c.id === activeChildId()) || null;
+  const childAvatar = (c: Child) =>
+    c.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(c.name)}&backgroundType=gradientLinear`;
 
   // Parse assistant text to extract structured recommendations and save
   const extractAndSave = async (text: string) => {
