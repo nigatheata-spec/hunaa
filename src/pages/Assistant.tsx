@@ -365,8 +365,10 @@ export default function Assistant() {
                   label={activeThread === "father" ? "اختر صورة الأب" : "اختر صورة الأم"}
                   size="md"
                   onSelect={async (url) => {
-                    const field = activeThread === "father" ? "father_avatar_url" : "mother_avatar_url";
-                    const { error } = await supabase.from("profiles").upsert({ id: user.id, [field]: url }, { onConflict: "id" });
+                    const payload: { id: string; father_avatar_url?: string; mother_avatar_url?: string } = { id: user.id };
+                    if (activeThread === "father") payload.father_avatar_url = url;
+                    else payload.mother_avatar_url = url;
+                    const { error } = await supabase.from("profiles").upsert(payload, { onConflict: "id" });
                     if (error) { toast.error(error.message); return; }
                     await loadProfile();
                     toast.success("تم حفظ الصورة");
