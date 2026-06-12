@@ -53,6 +53,7 @@ const App = () => (
             <Route path="/support" element={<Support />} />
             <Route path="/assistant" element={<Assistant />} />
             <Route path="/tracks/:slug" element={<TrackDetail />} />
+            <Route path="/tracks/:slug/idea/:idx" element={<IdeaDetail />} />
 
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute adminOnly><AdminContent /></ProtectedRoute>} />
