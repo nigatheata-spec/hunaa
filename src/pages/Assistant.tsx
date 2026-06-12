@@ -35,6 +35,10 @@ export default function Assistant() {
   const [openSuggest, setOpenSuggest] = useState(false);
   const [suggestion, setSuggestion] = useState("");
   const [threadConvIds, setThreadConvIds] = useState<Record<string, string>>({});
+  const [openAssessment, setOpenAssessment] = useState(false);
+  const [openResults, setOpenResults] = useState(false);
+  const [editingTraits, setEditingTraits] = useState(false);
+  const [traitsDraft, setTraitsDraft] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
