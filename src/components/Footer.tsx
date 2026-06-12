@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Film, Tv, Users, User, Sparkles } from "lucide-react";
+import { Film, Tv, Users, Clapperboard, Sparkles } from "lucide-react";
 
 const leftItems = [
   { label: "أفلام", to: "/movies", icon: Film },
@@ -7,7 +7,7 @@ const leftItems = [
 ];
 const rightItems = [
   { label: "مؤثرون", to: "/influencers", icon: Users },
-  { label: "حسابي", to: "/account", icon: User },
+  { label: "ريلز", to: "/reels", icon: Clapperboard },
 ];
 
 export const Footer = () => {
