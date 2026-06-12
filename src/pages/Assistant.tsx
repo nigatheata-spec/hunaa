@@ -438,6 +438,50 @@ export default function Assistant() {
           </aside>
         </div>
       </section>
+
+      {activeChild && (
+        <ChildAssessmentDialog
+          open={openAssessment}
+          onOpenChange={setOpenAssessment}
+          childName={activeChild.name}
+          onComplete={async (result) => {
+            const { error } = await supabase.from("children").update({
+              assessment: result as unknown as import("@/integrations/supabase/types").Json,
+              assessment_completed_at: new Date().toISOString(),
+            }).eq("id", activeChild.id);
+            if (error) { toast.error(error.message); return; }
+            await loadChildren();
+            toast.success(`تم فهم شخصية ${activeChild.name} ✓`);
+          }}
+        />
+      )}
+
+      {activeChild?.assessment && (
+        <Dialog open={openResults} onOpenChange={setOpenResults}>
+          <DialogContent className="bg-card max-w-md" dir="rtl">
+            <DialogHeader><DialogTitle>شخصية {activeChild.name}</DialogTitle></DialogHeader>
+            <div className="space-y-3">
+              {(Object.keys(activeChild.assessment.scores) as Array<keyof typeof activeChild.assessment.scores>).map(cat => {
+                const s = activeChild.assessment!.scores[cat];
+                return (
+                  <div key={cat}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="font-medium">{CATEGORY_LABEL[cat]}</span>
+                      <span className="text-primary font-bold">{s.percent}%</span>
+                    </div>
+                    <div className="h-2 bg-secondary/60 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-gold" style={{ width: `${s.percent}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+              <p className="text-[11px] text-muted-foreground text-center pt-2">
+                هذه النتائج تُغذّي الذكاء الاصطناعي ليرشّح محتوى أنسب لـ{activeChild.name} في كل المسارات.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </SiteLayout>
   );
 }
