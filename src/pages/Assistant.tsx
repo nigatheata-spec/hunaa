@@ -46,7 +46,7 @@ export default function Assistant() {
   const loadChildren = async () => {
     if (!user) return;
     const { data } = await supabase.from("children").select("*").eq("parent_id", user.id).order("created_at");
-    setChildren((data ?? []) as Child[]);
+    setChildren((data ?? []) as unknown as Child[]);
   };
 
   const loadConversations = async () => {
