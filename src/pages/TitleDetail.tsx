@@ -31,7 +31,7 @@ export default function TitleDetail() {
       setT(data as T | null);
       setLoading(false);
       if (data) {
-        supabase.from("titles").select("*").eq("kind", (data as T).kind).neq("id", id).eq("is_published", true).limit(8).then(({ data: r }) => {
+        supabase.from("titles").select("*").eq("kind", (data as T).kind as "movie" | "series" | "reel" | "influencer").neq("id", id).eq("is_published", true).limit(8).then(({ data: r }) => {
           setRelated((r ?? []) as T[]);
         });
       }
