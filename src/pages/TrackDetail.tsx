@@ -1,31 +1,12 @@
-import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
+import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft, Play, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { getTrack, type TrackIdea } from "@/data/tracks";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { getTrack } from "@/data/tracks";
 
 export default function TrackDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const track = slug ? getTrack(slug) : undefined;
   if (!track) return <Navigate to="/" replace />;
-
-  const openIdea = async (idea: TrackIdea) => {
-    // Try to find a real title matching the idea name; otherwise open the catalog.
-    const { data } = await supabase
-      .from("titles")
-      .select("id")
-      .ilike("title", `%${idea.title}%`)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (data?.id) {
-      navigate(`/title/${data.id}`);
-    } else {
-      toast.info("هذه فكرة قادمة قريباً — تصفّح المحتوى المتاح حالياً", { duration: 3000 });
-      navigate("/movies");
-    }
-  };
 
   return (
     <SiteLayout>
@@ -86,11 +67,10 @@ export default function TrackDetail() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {track.ideas.map((idea, i) => (
-            <button
+            <Link
               key={i}
-              type="button"
-              onClick={() => openIdea(idea)}
-              className="group relative text-right rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+              to={`/tracks/${track.slug}/idea/${i}`}
+              className="group relative block text-right rounded-2xl overflow-hidden ring-1 ring-primary/15 bg-card/60 backdrop-blur hover:ring-primary/40 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
@@ -115,7 +95,7 @@ export default function TrackDetail() {
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{idea.tagline}</p>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       </section>

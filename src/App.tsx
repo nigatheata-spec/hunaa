@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing.tsx";
 import Support from "./pages/Support.tsx";
 import Assistant from "./pages/Assistant.tsx";
 import TrackDetail from "./pages/TrackDetail.tsx";
+import IdeaDetail from "./pages/IdeaDetail.tsx";
 import AdminDashboard from "./pages/admin/Dashboard.tsx";
 import AdminContent from "./pages/admin/Content.tsx";
 import AdminRequests from "./pages/admin/Requests.tsx";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/support" element={<Support />} />
             <Route path="/assistant" element={<Assistant />} />
             <Route path="/tracks/:slug" element={<TrackDetail />} />
+            <Route path="/tracks/:slug/idea/:idx" element={<IdeaDetail />} />
 
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute adminOnly><AdminContent /></ProtectedRoute>} />
