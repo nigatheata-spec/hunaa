@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
 import { CATEGORY_LABEL, categoryBrief, categoryDetail, type AssessmentResult } from "@/data/childAssessment";
+import { AvatarPicker } from "@/components/AvatarPicker";
+import { defaultAvatarFor } from "@/data/avatars";
 
 interface Msg { role: "user" | "assistant"; content: string }
 interface Child {
