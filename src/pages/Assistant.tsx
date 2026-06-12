@@ -293,6 +293,21 @@ export default function Assistant() {
               </div>
             </DialogContent>
           </Dialog>
+          <Dialog open={openSuggest} onOpenChange={setOpenSuggest}>
+            <DialogTrigger asChild>
+              <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm border border-dashed border-primary/40 text-primary hover:bg-primary/10 transition">
+                <MessageSquareHeart className="w-4 h-4" /> اقتراح للإدارة
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-card max-w-md" dir="rtl">
+              <DialogHeader><DialogTitle>تواصل مع إدارة منصة هنا</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">اكتب اقتراحك أو ملاحظتك أو محتوى تتمنى توفره. يصل مباشرة للإدارة ويُلخّص بالذكاء الاصطناعي ضمن مقترحات الجمهور.</p>
+                <Textarea value={suggestion} onChange={e => setSuggestion(e.target.value)} rows={5} placeholder="مثال: أتمنى محتوى عن قصص الصحابة للأطفال 7-10 سنوات..." />
+                <Button variant="hero" className="w-full" onClick={sendSuggestion}>إرسال للإدارة</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-5">
