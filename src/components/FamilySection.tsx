@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArabesqueDivider } from "./ArabesqueDivider";
 import { Button } from "./ui/button";
 
@@ -8,6 +9,7 @@ const members = [
     description: "محتوى يدعم دورك القيادي في الأسرة، ونصائح تربوية من المساعد الذكي.",
     gradient: "from-amber-600/30 to-yellow-700/20",
     emoji: "👨",
+    thread: "father",
   },
   {
     role: "أم",
@@ -15,6 +17,7 @@ const members = [
     description: "محتوى يثري حياتك ويدعم رسالتك التربوية، مع توصيات يومية مخصصة.",
     gradient: "from-rose-500/30 to-pink-600/20",
     emoji: "👩",
+    thread: "mother",
   },
   {
     role: "ابن",
@@ -22,6 +25,7 @@ const members = [
     description: "محتوى مناسب لعمرك يصقل شخصيتك ويبني هويتك الإسلامية بأسلوب جذاب.",
     gradient: "from-cyan-500/30 to-blue-600/20",
     emoji: "👦",
+    thread: "son",
   },
   {
     role: "بنت",
@@ -29,6 +33,7 @@ const members = [
     description: "تجربة آمنة وملهمة، محتوى منتقى بعناية يناسب اهتماماتك ومرحلتك.",
     gradient: "from-violet-500/30 to-fuchsia-600/20",
     emoji: "👧",
+    thread: "daughter",
   },
 ];
 
@@ -55,9 +60,10 @@ export const FamilySection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {members.map((member, idx) => (
-            <div
+            <Link
               key={member.role}
-              className="group relative rounded-2xl overflow-hidden border border-primary/20 hover:border-primary/60 transition-all duration-500 animate-fade-up"
+              to={`/assistant?thread=${member.thread}`}
+              className="group relative rounded-2xl overflow-hidden border border-primary/20 hover:border-primary/60 transition-all duration-500 animate-fade-up block"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
               <div className={`relative bg-gradient-to-br ${member.gradient} p-8 h-full backdrop-blur-sm`}>
@@ -76,12 +82,12 @@ export const FamilySection = () => {
                     {member.description}
                   </p>
 
-                  <Button variant="outlineGold" size="sm" className="w-full">
-                    اختر {member.title}
+                  <Button variant="outlineGold" size="sm" className="w-full pointer-events-none">
+                    افتح المساعد الذكي
                   </Button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

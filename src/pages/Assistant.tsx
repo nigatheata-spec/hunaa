@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { ChildAssessmentDialog } from "@/components/ChildAssessmentDialog";
 import { CATEGORY_LABEL, categoryBrief, categoryDetail, type AssessmentResult } from "@/data/childAssessment";
+import { AvatarPicker } from "@/components/AvatarPicker";
+import { defaultAvatarFor } from "@/data/avatars";
 
 interface Msg { role: "user" | "assistant"; content: string }
 interface Child {
@@ -41,6 +43,8 @@ export default function Assistant() {
   const [expandedCat, setExpandedCat] = useState<import("@/data/childAssessment").AssessmentCategory | null>(null);
   const [editingTraits, setEditingTraits] = useState(false);
   const [traitsDraft, setTraitsDraft] = useState("");
+  const [profile, setProfile] = useState<{ father_avatar_url: string | null; mother_avatar_url: string | null } | null>(null);
+  const [searchParams] = useSearchParams();
   const endRef = useRef<HTMLDivElement>(null);
 
   const threadKey = (row: { family_role: string | null; child_id: string | null }): string | null => {
@@ -76,8 +80,29 @@ export default function Assistant() {
     setRecommendations((data ?? []) as Rec[]);
   };
 
-  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); }, [user]);
+  const loadProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("profiles").select("father_avatar_url, mother_avatar_url").eq("id", user.id).maybeSingle();
+    if (data) setProfile(data as { father_avatar_url: string | null; mother_avatar_url: string | null });
+  };
+
+  useEffect(() => { loadChildren(); loadRecs(); loadConversations(); loadProfile(); }, [user]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [threadMessages, activeThread]);
+
+  // Honor ?thread= from URL (father | mother | son | daughter | <childId>)
+  useEffect(() => {
+    const t = searchParams.get("thread");
+    if (!t) return;
+    if (t === "father" || t === "mother") { setActiveThread(t); return; }
+    if (t === "son" || t === "daughter") {
+      const target = children.find(c => c.gender === (t === "son" ? "boy" : "girl"));
+      if (target) setActiveThread(target.id);
+      else setOpenAddChild(true);
+      return;
+    }
+    // assume child id
+    if (children.some(c => c.id === t)) setActiveThread(t);
+  }, [searchParams, children]);
 
   const greetingFor = (key: ThreadKey): Msg => {
     if (key === "father") return { role: "assistant", content: "السلام عليكم. أنا مساعدك التربوي الذكي في منصة هنا 🌿\nأخبرني عن نفسك كأب وعن همومك التربوية وأبنائك، وسأرشّح لك محتوى يناسب ما تريد بناءه فيهم أو فيك." };
@@ -328,15 +353,72 @@ export default function Assistant() {
           </Dialog>
         </div>
 
+        {/* Parent profile sub-card — shown when father/mother thread active */}
+        {(activeThread === "father" || activeThread === "mother") && (
+          <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
+            <div className="flex items-center gap-4 flex-wrap">
+              {user ? (
+                <AvatarPicker
+                  kind={activeThread === "father" ? "father" : "mother"}
+                  currentUrl={activeThread === "father" ? profile?.father_avatar_url : profile?.mother_avatar_url}
+                  seed={user.id + activeThread}
+                  label={activeThread === "father" ? "اختر صورة الأب" : "اختر صورة الأم"}
+                  size="md"
+                  onSelect={async (url) => {
+                    const payload: { id: string; father_avatar_url?: string; mother_avatar_url?: string } = { id: user.id };
+                    if (activeThread === "father") payload.father_avatar_url = url;
+                    else payload.mother_avatar_url = url;
+                    const { error } = await supabase.from("profiles").upsert(payload, { onConflict: "id" });
+                    if (error) { toast.error(error.message); return; }
+                    await loadProfile();
+                    toast.success("تم حفظ الصورة");
+                  }}
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-secondary/40 border-2 border-primary/40 flex items-center justify-center text-3xl">
+                  {activeThread === "father" ? "👨" : "👩"}
+                </div>
+              )}
+              <div className="flex-1 min-w-[200px]">
+                <h3 className="text-lg font-bold text-primary">
+                  {activeThread === "father" ? "بروفايل الأب" : "بروفايل الأم"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  {activeThread === "father"
+                    ? "محادثة خاصة بك — يتذكر المساعد همومك التربوية ويرشّح محتوى مناسباً."
+                    : "محادثة خاصة بكِ — يتذكر المساعد رسالتكِ التربوية ويُخصّص الترشيحات."}
+                </p>
+                {!user && (
+                  <p className="text-[11px] text-primary mt-2">
+                    <Link to="/auth" className="hover:underline">سجّل دخولك</Link> لحفظ الصورة والمحادثة.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Child profile sub-card — shown when a child thread is active */}
         {activeChild && (
           <div className="glass-card rounded-2xl p-4 mb-5 border border-primary/20">
             <div className="flex items-start gap-4 flex-wrap">
-              <img
-                src={childAvatar(activeChild)}
-                alt={activeChild.name}
-                className="w-20 h-20 rounded-full border-2 border-primary/40 shadow-gold bg-secondary/40 object-cover"
+              <AvatarPicker
+                kind={activeChild.gender === "girl" ? "girl" : "boy"}
+                currentUrl={activeChild.avatar_url}
+                seed={activeChild.id}
+                label={`اختر صورة ${activeChild.name}`}
+                size="md"
+                onSelect={async (url) => {
+                  const { error } = await supabase.from("children").update({ avatar_url: url }).eq("id", activeChild.id);
+                  if (error) { toast.error(error.message); return; }
+                  await loadChildren();
+                  toast.success("تم حفظ الصورة");
+                }}
               />
+              {/* keep layout: hidden placeholder removed — picker replaces img */}
+              <div style={{ display: "none" }} aria-hidden>
+                <img src={childAvatar(activeChild)} alt="" />
+              </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-lg font-bold text-primary">{activeChild.name}</h3>
