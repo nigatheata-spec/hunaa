@@ -29,6 +29,7 @@ import AdminUsers from "./pages/admin/Users.tsx";
 import AdminPlans from "./pages/admin/Plans.tsx";
 import AdminGateways from "./pages/admin/Gateways.tsx";
 import AdminSupport from "./pages/admin/Support.tsx";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop />
           <Routes>
+
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
