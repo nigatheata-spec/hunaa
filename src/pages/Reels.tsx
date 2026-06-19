@@ -42,7 +42,7 @@ export default function Reels() {
             </button>
 
             {/* Side actions */}
-            <div className="absolute left-3 bottom-40 z-10 flex flex-col items-center gap-5 text-foreground">
+            <div className="absolute left-3 bottom-32 z-10 flex flex-col items-center gap-5 text-foreground">
               <button className="flex flex-col items-center gap-1">
                 <span className="w-11 h-11 rounded-full bg-background/60 backdrop-blur flex items-center justify-center">
                   <Heart className="w-5 h-5 text-primary" />
