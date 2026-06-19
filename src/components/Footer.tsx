@@ -43,7 +43,7 @@ export const Footer = () => {
               }`}
             >
               <Home className="w-5 h-5" />
-              <span className="text-[9px] font-bold">هوم</span>
+              <span className="text-[9px] font-bold">الرئيسية</span>
             </Link>
           </div>
           <div className="flex justify-center">{renderItem(centerItems[0])}</div>
