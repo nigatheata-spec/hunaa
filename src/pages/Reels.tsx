@@ -20,13 +20,13 @@ export default function Reels() {
   return (
     <SiteLayout>
       <div
-        className="relative w-full h-[100svh] overflow-y-auto snap-y snap-mandatory bg-background"
+        className="relative w-full h-[calc(100svh-5.5rem)] overflow-y-auto snap-y snap-mandatory bg-background"
         style={{ scrollbarWidth: "none" }}
       >
         {REELS.map((r) => (
           <section
             key={r.id}
-            className="relative w-full h-[100svh] snap-start snap-always flex items-center justify-center"
+            className="relative w-full h-[calc(100svh-5.5rem)] snap-start snap-always flex items-center justify-center"
           >
             {/* Background image */}
             <img
@@ -42,7 +42,7 @@ export default function Reels() {
             </button>
 
             {/* Side actions */}
-            <div className="absolute left-3 bottom-40 z-10 flex flex-col items-center gap-5 text-foreground">
+            <div className="absolute left-3 bottom-32 z-10 flex flex-col items-center gap-5 text-foreground">
               <button className="flex flex-col items-center gap-1">
                 <span className="w-11 h-11 rounded-full bg-background/60 backdrop-blur flex items-center justify-center">
                   <Heart className="w-5 h-5 text-primary" />
@@ -63,7 +63,7 @@ export default function Reels() {
             </div>
 
             {/* Bottom content */}
-            <div className="absolute inset-x-0 bottom-0 z-10 p-5 pb-24">
+            <div className="absolute inset-x-0 bottom-0 z-10 p-5 pb-6">
               <div className="text-xs text-primary font-semibold mb-1">@{r.author}</div>
               <h3 className="text-xl font-bold leading-tight">{r.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2 mb-3">{r.desc}</p>
