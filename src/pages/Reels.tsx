@@ -18,7 +18,7 @@ const REELS = [
 
 export default function Reels() {
   return (
-    <SiteLayout>
+    <SiteLayout noTopPadding>
       <div
         className="relative w-full h-[calc(100svh-5.5rem)] overflow-y-auto snap-y snap-mandatory bg-background"
         style={{ scrollbarWidth: "none" }}
