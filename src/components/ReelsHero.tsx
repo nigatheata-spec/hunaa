@@ -126,25 +126,25 @@ export const ReelsHero = () => {
         </div>
       ))}
 
-      {/* المحتوى - مُركز بدون صورتين جانبيتان */}
-      <div className="relative z-20 container mx-auto px-6 pt-28 pb-16 flex items-center justify-center min-h-screen">
+      {/* المحتوى - مُركز بدون صورتين جانبيتان - مُصغّر لإعطاء مساحة أكبر للصورة */}
+      <div className="relative z-20 container mx-auto px-6 pt-40 pb-8 flex items-end justify-center min-h-screen">
         <div key={slide.key} className="animate-fade-up text-center max-w-3xl">
-          <span className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-sm font-medium backdrop-blur-sm">
-            <Sparkles className="w-3.5 h-3.5" />
+          <span className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-medium backdrop-blur-sm">
+            <Sparkles className="w-3 h-3" />
             {slide.badge}
           </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-5 leading-tight">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">
             <span className="text-gold-gradient">{slide.title}</span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed max-w-xl mx-auto line-clamp-2">
             {slide.subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="xl" onClick={() => navigate(slide.route)}>
+          <div className="flex flex-row gap-2 justify-center">
+            <Button variant="hero" size="sm" className="text-xs px-3 py-1 h-7" onClick={() => navigate(slide.route)}>
               {slide.cta}
             </Button>
-            <Button variant="outlineGold" size="xl" onClick={() => navigate("/assistant")}>
-              المساعد التربوي
+            <Button variant="outlineGold" size="sm" className="text-xs px-3 py-1 h-7" onClick={() => navigate("/assistant")}>
+              المساعد
             </Button>
           </div>
 
