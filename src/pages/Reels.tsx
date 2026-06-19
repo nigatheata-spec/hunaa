@@ -20,13 +20,13 @@ export default function Reels() {
   return (
     <SiteLayout>
       <div
-        className="relative w-full h-[100svh] overflow-y-auto snap-y snap-mandatory bg-background"
+        className="relative w-full h-[calc(100svh-5.5rem)] overflow-y-auto snap-y snap-mandatory bg-background"
         style={{ scrollbarWidth: "none" }}
       >
         {REELS.map((r) => (
           <section
             key={r.id}
-            className="relative w-full h-[100svh] snap-start snap-always flex items-center justify-center"
+            className="relative w-full h-[calc(100svh-5.5rem)] snap-start snap-always flex items-center justify-center"
           >
             {/* Background image */}
             <img
