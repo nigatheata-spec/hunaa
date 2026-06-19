@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Film, Users, Clapperboard, Sparkles, Home } from "lucide-react";
 
 const centerItems = [
-  { label: "أعمال", to: "/movies", icon: Film },
+  { label: "أفلام", to: "/movies", icon: Film },
   { label: "مؤثرون", to: "/influencers", icon: Users },
   { label: "ريلز", to: "/reels", icon: Clapperboard },
 ];
