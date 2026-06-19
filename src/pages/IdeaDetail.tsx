@@ -46,69 +46,49 @@ export default function IdeaDetail() {
             رجوع إلى مسار {track.title}
           </Link>
 
-          <div className="grid md:grid-cols-[300px_1fr] gap-8 items-start">
-            {/* البوستر */}
-            <div className="relative mx-auto md:mx-0 w-56 md:w-full">
-              <div className="absolute -inset-3 bg-gradient-gold rounded-2xl blur-2xl opacity-40" />
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-gold-lg ring-1 ring-primary/30">
-                <img
-                  src={track.image}
-                  alt={idea.title}
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: `${(i * 23) % 100}% ${(i * 31) % 100}%` }}
-                />
-                <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-25 mix-blend-overlay`} />
-                <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-background/80 backdrop-blur text-primary text-[10px] font-bold">
-                  فكرة {String(i + 1).padStart(2, "0")} • {track.title}
-                </div>
-              </div>
+          <div className="text-right max-w-4xl mr-auto">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5" />
+              {track.title}
+            </span>
+            <h1 className="mt-4 text-4xl md:text-5xl font-bold leading-tight">
+              <span className="text-gold-gradient">{idea.title}</span>
+            </h1>
+            <p className="mt-3 text-lg text-foreground/90">{idea.tagline}</p>
+
+            <p className="mt-5 text-muted-foreground leading-relaxed">
+              {track.description} يقدّم هذا العمل تجربة سينمائية مميزة ضمن مسار {track.title}،
+              مصمّم بعناية ليُلامس قلب طفلك ويُغذّي عقله بقيم ومعارف يبقى أثرها معه طويلاً.
+            </p>
+
+            {/* بيانات سريعة */}
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {meta.map((m) => {
+                const Icon = m.icon;
+                return (
+                  <div key={m.label} className="rounded-xl bg-card/60 backdrop-blur border border-primary/15 px-3 py-2.5 text-right">
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+                      <Icon className="w-3 h-3 text-primary" />
+                      {m.label}
+                    </div>
+                    <div className="text-sm font-bold text-foreground">{m.value}</div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* المعلومات */}
-            <div className="text-center md:text-right">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
-                {track.title}
-              </span>
-              <h1 className="mt-4 text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-gold-gradient">{idea.title}</span>
-              </h1>
-              <p className="mt-3 text-lg text-foreground/90">{idea.tagline}</p>
-
-              <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
-                {track.description} يقدّم هذا العمل تجربة سينمائية مميزة ضمن مسار {track.title}،
-                مصمّم بعناية ليُلامس قلب طفلك ويُغذّي عقله بقيم ومعارف يبقى أثرها معه طويلاً.
-              </p>
-
-              {/* بيانات سريعة */}
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
-                {meta.map((m) => {
-                  const Icon = m.icon;
-                  return (
-                    <div key={m.label} className="rounded-xl bg-card/60 backdrop-blur border border-primary/15 px-3 py-2.5 text-right">
-                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
-                        <Icon className="w-3 h-3 text-primary" />
-                        {m.label}
-                      </div>
-                      <div className="text-sm font-bold text-foreground">{m.value}</div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* أزرار */}
-              <div className="mt-7 flex flex-wrap gap-3 justify-center md:justify-start">
-                <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-gold text-primary-foreground font-bold shadow-gold-lg hover:scale-105 transition">
-                  <Play className="w-4 h-4" fill="currentColor" />
-                  شاهد الآن
-                </button>
-                <Link
-                  to={`/tracks/${track.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/30 text-primary hover:bg-primary/10 transition"
-                >
-                  المزيد من {track.title}
-                </Link>
-              </div>
+            {/* أزرار */}
+            <div className="mt-7 flex flex-wrap gap-3 justify-start">
+              <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-gold text-primary-foreground font-bold shadow-gold-lg hover:scale-105 transition">
+                <Play className="w-4 h-4" fill="currentColor" />
+                شاهد الآن
+              </button>
+              <Link
+                to={`/tracks/${track.slug}`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/30 text-primary hover:bg-primary/10 transition"
+              >
+                المزيد من {track.title}
+              </Link>
             </div>
           </div>
         </div>
