@@ -121,8 +121,8 @@ export const ReelsHero = () => {
           }`}
         >
           <img src={s.image} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-l from-background/90 via-background/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/20" />
+          <div className="absolute inset-0 bg-gradient-to-l from-background/40 via-background/15 to-transparent" />
         </div>
       ))}
 
