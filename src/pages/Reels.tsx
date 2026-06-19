@@ -63,7 +63,7 @@ export default function Reels() {
             </div>
 
             {/* Bottom content */}
-            <div className="absolute inset-x-0 bottom-0 z-10 p-5 pb-10">
+            <div className="absolute inset-x-0 bottom-0 z-10 p-5 pb-24">
               <div className="text-xs text-primary font-semibold mb-1">@{r.author}</div>
               <h3 className="text-xl font-bold leading-tight">{r.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2 mb-3">{r.desc}</p>
