@@ -1,0 +1,3 @@
+DELETE FROM public.titles WHERE title = 'بيت الأندلس';
+INSERT INTO public.titles (kind, title, slug, synopsis, poster_url, audience, is_published, track, age_rating)
+VALUES ('movie', 'الرسالة 2', 'al-risala-2', 'فيلم سينمائي ملهم عن السيدة خديجة بنت خويلد رضي الله عنها، أمّ المؤمنين وأوّل من آمن، وسند النبوة في رحلة الدعوة الأولى.', '/__l5e/assets-v1/5ad5d383-4c6d-4db0-9937-10800fc6276e/risala2-poster.jpg', ARRAY['father','mother','son','daughter'], true, 'تاريخ إسلامي', '+8');
