@@ -69,7 +69,7 @@ export const Hero = () => {
   const slide = SLIDES[idx];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pb-32 md:pb-28">
+    <section className="relative min-h-[calc(100dvh-4rem)] flex items-center justify-center pb-24 md:pb-20">
       {/* خلفية الصورة */}
       <div className="absolute inset-0 z-0">
         <img
@@ -106,7 +106,7 @@ export const Hero = () => {
             {slide.images.map((src, i) => (
               <div
                 key={i}
-                className="relative aspect-[3/4] overflow-hidden rounded-2xl ring-1 ring-primary/30"
+                className="relative aspect-[3/4] md:aspect-[16/9] overflow-hidden rounded-2xl ring-1 ring-primary/30"
               >
                 <img
                   src={src}
