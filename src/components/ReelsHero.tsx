@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Sparkles } from "lucide-react";
 
 import movie1 from "@/assets/movie-1.jpg";
-import series1 from "@/assets/series-1.jpg";
+import risala2A from "@/assets/movie-risala2-a.jpg";
 import influencer1 from "@/assets/influencer-1.jpg";
 import reel1 from "@/assets/reel-1.jpg";
 import familyImg from "@/assets/track-family.jpg";
@@ -33,13 +33,13 @@ const SLIDES: Slide[] = [
     image: movie1,
   },
   {
-    key: "series",
-    badge: "مسلسلات هادفة",
-    title: "حكايات تنسج القيم",
-    subtitle: "مسلسلات ممتدة تبني وجدان الصغار والكبار في كل حلقة.",
-    cta: "استكشف المسلسلات",
-    route: "/series",
-    image: series1,
+    key: "risala2",
+    badge: "فيلم جديد",
+    title: "الرسالة 2",
+    subtitle: "سيرة السيدة خديجة بنت خويلد رضي الله عنها.. أمّ المؤمنين وسند النبوة.",
+    cta: "شاهد الفيلم",
+    route: "/movies",
+    image: risala2A,
   },
   {
     key: "influencers",
