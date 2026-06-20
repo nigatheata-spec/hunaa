@@ -127,7 +127,7 @@ export const ReelsHero = () => {
       ))}
 
       {/* المحتوى - مُركز بدون صورتين جانبيتان - مُصغّر لإعطاء مساحة أكبر للصورة */}
-      <div className="relative z-20 container mx-auto px-6 pt-40 pb-8 flex items-end justify-center min-h-screen">
+      <div className="relative z-20 container mx-auto px-6 pt-40 pb-32 md:pb-24 flex items-end justify-center min-h-screen">
         <div key={slide.key} className="animate-fade-up text-center max-w-3xl">
           <span className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-medium backdrop-blur-sm">
             <Sparkles className="w-3 h-3" />
