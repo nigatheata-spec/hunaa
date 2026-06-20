@@ -135,6 +135,11 @@ export const ReelsHero = () => {
           </span>
           <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">
             <span className="text-gold-gradient">{slide.title}</span>
+            {slide.key === 'risala2' && (
+              <span className="block md:inline-block text-3xl md:text-4xl lg:text-5xl font-bold text-gold-gradient mt-1 md:mr-3">
+                السيدة خديجة
+              </span>
+            )}
           </h1>
           <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed max-w-xl mx-auto line-clamp-2">
             {slide.subtitle}
