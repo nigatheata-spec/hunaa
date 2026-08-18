@@ -22,6 +22,7 @@ import TrackDetail from "./pages/TrackDetail.tsx";
 import IdeaDetail from "./pages/IdeaDetail.tsx";
 import AdminDashboard from "./pages/admin/Dashboard.tsx";
 import AdminContent from "./pages/admin/Content.tsx";
+import AdminReels from "./pages/admin/Reels.tsx";
 import AdminRequests from "./pages/admin/Requests.tsx";
 import AdminSuggestions from "./pages/admin/Suggestions.tsx";
 import AdminInfluencers from "./pages/admin/Influencers.tsx";
@@ -60,6 +61,7 @@ const App = () => (
 
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute adminOnly><AdminContent /></ProtectedRoute>} />
+            <Route path="/admin/reels" element={<ProtectedRoute adminOnly><AdminReels /></ProtectedRoute>} />
             <Route path="/admin/requests" element={<ProtectedRoute adminOnly><AdminRequests /></ProtectedRoute>} />
             <Route path="/admin/suggestions" element={<ProtectedRoute adminOnly><AdminSuggestions /></ProtectedRoute>} />
 
