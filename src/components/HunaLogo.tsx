@@ -1,13 +1,8 @@
+import logoImg from "@/assets/hunaa-logo.png";
+
 export const HunaLogo = ({ className = "", size = "default" }: { className?: string; size?: "sm" | "default" | "lg" }) => {
-  const sizes = { sm: "text-xl", default: "text-2xl", lg: "text-4xl" };
+  const sizes = { sm: "h-6", default: "h-8", lg: "h-12" };
   return (
-    <div className={`inline-flex items-center gap-2.5 ${className}`}>
-      <div className="relative w-9 h-9 flex items-center justify-center">
-        <div className="absolute inset-0 rounded-full bg-gradient-gold-shine opacity-90 animate-shimmer" />
-        <div className="absolute inset-[2px] rounded-full bg-background" />
-        <span className="relative font-serif-ar text-primary text-xl leading-none">ه</span>
-      </div>
-      <span className={`font-bold text-gold-gradient tracking-wide ${sizes[size]}`}>هُنا</span>
-    </div>
+    <img src={logoImg} alt="Hunaa" className={`${sizes[size]} w-auto ${className}`} />
   );
 };
